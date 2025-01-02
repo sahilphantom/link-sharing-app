@@ -16,6 +16,14 @@ export default function App() {
   })
   const [links, setLinks] = useState([])
 
+  const handleProfileUpdate = (updatedProfile) => {
+    setProfile(updatedProfile)
+  }
+
+  const handleLinksUpdate = (updatedLinks) => {
+    setLinks(updatedLinks)
+  }
+
   return (
     <Router>
       <Routes>
@@ -37,11 +45,11 @@ export default function App() {
                     <Routes>
                       <Route 
                         path="/" 
-                        element={<LinkForm links={links} setLinks={setLinks} />} 
+                        element={<LinkForm links={links} onLinksUpdate={handleLinksUpdate} />} 
                       />
                       <Route 
                         path="/profile" 
-                        element={<ProfileForm profile={profile} setProfile={setProfile} />} 
+                        element={<ProfileForm profile={profile} onProfileUpdate={handleProfileUpdate} />} 
                       />
                     </Routes>
                   </div>

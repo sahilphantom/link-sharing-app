@@ -6,6 +6,7 @@ export function PreviewPage({ profile, links }) {
     try {
       await navigator.clipboard.writeText(window.location.href)
       // You could add a toast notification here
+      alert('Link copied to clipboard!')
     } catch (err) {
       console.error('Failed to copy link:', err)
     }
@@ -32,7 +33,7 @@ export function PreviewPage({ profile, links }) {
 
         <div className="max-w-[480px] mx-auto mt-8 bg-white rounded-xl p-8 shadow-lg">
           <div className="flex flex-col items-center gap-6">
-            {profile?.imageUrl ? (
+            {profile.imageUrl ? (
               <img
                 src={profile.imageUrl}
                 alt={`${profile.firstName} ${profile.lastName}`}
@@ -52,7 +53,7 @@ export function PreviewPage({ profile, links }) {
             </div>
 
             <div className="w-full space-y-4 mt-4">
-              {links.map((link, index) => (
+              {links.map((link) => (
                 <a
                   key={link.id}
                   href={link.url}

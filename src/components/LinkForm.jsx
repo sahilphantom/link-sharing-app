@@ -1,37 +1,45 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, Reorder } from 'framer-motion'
 import { Plus, GripVertical } from 'lucide-react'
 
-export function LinkForm() {
-  const [links, setLinks] = useState([])
+export function LinkForm({ links, onLinksUpdate }) {
+  const [localLinks, setLocalLinks] = useState(links)
   const [errors, setErrors] = useState({})
 
+  useEffect(() => {
+    setLocalLinks(links)
+  }, [links])
+
   const addLink = () => {
-    setLinks([
-      ...links,
+    const updatedLinks = [
+      ...localLinks,
       {
         id: Date.now(),
         platform: 'GitHub',
         url: '',
       },
-    ])
+    ]
+    setLocalLinks(updatedLinks)
+    onLinksUpdate(updatedLinks)
   }
 
   const removeLink = (id) => {
-    setLinks(links.filter((link) => link.id !== id))
+    const updatedLinks = localLinks.filter((link) => link.id !== id)
+    setLocalLinks(updatedLinks)
+    onLinksUpdate(updatedLinks)
   }
 
   const updateLink = (id, field, value) => {
-    setLinks(
-      links.map((link) =>
-        link.id === id ? { ...link, [field]: value } : link
-      )
+    const updatedLinks = localLinks.map((link) =>
+      link.id === id ? { ...link, [field]: value } : link
     )
+    setLocalLinks(updatedLinks)
+    onLinksUpdate(updatedLinks)
   }
 
   const validateForm = () => {
     const newErrors = {}
-    links.forEach((link) => {
+    localLinks.forEach((link) => {
       if (!link.url) {
         newErrors[link.id] = 'Please enter a URL'
       } else if (!isValidUrl(link.url)) {
@@ -45,8 +53,8 @@ export function LinkForm() {
   const handleSubmit = (e) => {
     e.preventDefault()
     if (validateForm()) {
-      // Handle form submission
-      console.log('Form submitted:', links)
+      onLinksUpdate(localLinks)
+      // You could add a success message here
     }
   }
 
@@ -68,8 +76,8 @@ export function LinkForm() {
         Add new link
       </button>
 
-      <Reorder.Group axis="y" values={links} onReorder={setLinks} className="space-y-6">
-        {links.map((link, index) => (
+      <Reorder.Group axis="y" values={localLinks} onReorder={setLocalLinks} className="space-y-6">
+        {localLinks.map((link, index) => (
           <Reorder.Item
             key={link.id}
             value={link}
@@ -121,8 +129,7 @@ export function LinkForm() {
 
       <button
         type="submit"
-        className="w-full px-6 py-3 text-white bg-purple-600 rounded-lg hover:bg-purple-700"
-      >
+        className="w-full px-6 py-3 text-white bg-purple-600 rounded-lg hover:bg-purple-700">
         Save
       </button>
     </form>

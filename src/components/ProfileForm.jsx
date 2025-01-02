@@ -1,18 +1,17 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ImageIcon, Check } from 'lucide-react'
 
-export function ProfileForm() {
-  const [profile, setProfile] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    image: null,
-    imageUrl: null
-  })
-  const [imagePreview, setImagePreview] = useState(null)
+export function ProfileForm({ profile, onProfileUpdate }) {
+  const [localProfile, setLocalProfile] = useState(profile)
+  const [imagePreview, setImagePreview] = useState(profile.imageUrl)
   const [showToast, setShowToast] = useState(false)
   const [errors, setErrors] = useState({})
+
+  useEffect(() => {
+    setLocalProfile(profile)
+    setImagePreview(profile.imageUrl)
+  }, [profile])
 
   const handleImageChange = (e) => {
     const file = e.target.files?.[0]
@@ -28,7 +27,7 @@ export function ProfileForm() {
       const reader = new FileReader()
       reader.onloadend = () => {
         setImagePreview(reader.result)
-        setProfile(prev => ({ 
+        setLocalProfile(prev => ({ 
           ...prev, 
           image: file,
           imageUrl: reader.result
@@ -41,13 +40,13 @@ export function ProfileForm() {
 
   const validateForm = () => {
     const newErrors = {}
-    if (!profile.firstName.trim()) {
+    if (!localProfile.firstName.trim()) {
       newErrors.firstName = 'First name is required'
     }
-    if (!profile.lastName.trim()) {
+    if (!localProfile.lastName.trim()) {
       newErrors.lastName = 'Last name is required'
     }
-    if (profile.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(profile.email)) {
+    if (localProfile.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(localProfile.email)) {
       newErrors.email = 'Please enter a valid email'
     }
     setErrors(newErrors)
@@ -57,8 +56,7 @@ export function ProfileForm() {
   const handleSubmit = (e) => {
     e.preventDefault()
     if (validateForm()) {
-      // Handle form submission
-      console.log('Form submitted:', profile)
+      onProfileUpdate(localProfile)
       setShowToast(true)
       setTimeout(() => setShowToast(false), 3000)
     }
@@ -117,8 +115,8 @@ export function ProfileForm() {
             <div className="flex-1">
               <input
                 type="text"
-                value={profile.firstName}
-                onChange={(e) => setProfile(prev => ({ ...prev, firstName: e.target.value }))}
+                value={localProfile.firstName}
+                onChange={(e) => setLocalProfile(prev => ({ ...prev, firstName: e.target.value }))}
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
                 placeholder="e.g. John"
               />
@@ -135,8 +133,8 @@ export function ProfileForm() {
             <div className="flex-1">
               <input
                 type="text"
-                value={profile.lastName}
-                onChange={(e) => setProfile(prev => ({ ...prev, lastName: e.target.value }))}
+                value={localProfile.lastName}
+                onChange={(e) => setLocalProfile(prev => ({ ...prev, lastName: e.target.value }))}
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
                 placeholder="e.g. Doe"
               />
@@ -153,8 +151,8 @@ export function ProfileForm() {
             <div className="flex-1">
               <input
                 type="email"
-                value={profile.email}
-                onChange={(e) => setProfile(prev => ({ ...prev, email: e.target.value }))}
+                value={localProfile.email}
+                onChange={(e) => setLocalProfile(prev => ({ ...prev, email: e.target.value }))}
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
                 placeholder="e.g. email@example.com"
               />
