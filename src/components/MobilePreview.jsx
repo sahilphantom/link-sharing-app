@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { Github, Youtube, Linkedin } from 'lucide-react'
 
 export function MobilePreview({ links, profile }) {
   return (
@@ -69,7 +70,16 @@ function getLinkStyle(platform) {
 }
 
 function getLinkIcon(platform) {
-  // You can replace these with actual icons
-  return <div className="w-5 h-5 bg-white/20 rounded" />
+  const iconProps = { className: "w-5 h-5 text-white" };
+  switch (platform) {
+    case 'GitHub':
+      return <Github {...iconProps} />;
+    case 'YouTube':
+      return <Youtube {...iconProps} />;
+    case 'LinkedIn':
+      return <Linkedin {...iconProps} />;
+    default:
+      return <div className="w-5 h-5 bg-white/20 rounded" />;
+  }
 }
 
